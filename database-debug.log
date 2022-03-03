@@ -1,0 +1,9 @@
+13:17:30.705 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+13:17:30.861 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:9000
+14:19:55.718 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
+14:19:55.730 [NamespaceSystem-akka.actor.default-dispatcher-13] INFO com.firebase.core.namespace.Terminator$Terminator - 2 actors left to terminate: blackjack-realtime-default-rtdb, blackjack-realtime
+14:19:55.745 [NamespaceSystem-akka.actor.default-dispatcher-13] INFO com.firebase.core.namespace.NamespaceActor - Stopping namespace actor for blackjack-realtime-default-rtdb
+14:19:55.745 [NamespaceSystem-akka.actor.default-dispatcher-14] INFO com.firebase.core.namespace.NamespaceActor - Stopping namespace actor for blackjack-realtime
+14:19:55.748 [NamespaceSystem-akka.actor.default-dispatcher-13] INFO com.firebase.core.namespace.NamespaceActor - Gauges removed for blackjack-realtime-default-rtdb
+14:19:55.748 [NamespaceSystem-akka.actor.default-dispatcher-14] INFO com.firebase.core.namespace.NamespaceActor - Gauges removed for blackjack-realtime
+14:19:55.752 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.
