@@ -1,5 +1,6 @@
 import * as firebase from 'firebase/app'
 import {
+    Auth,
     connectAuthEmulator,
     getAuth,
     onAuthStateChanged,
@@ -7,6 +8,11 @@ import {
     signOut,
     UserCredential,
 } from 'firebase/auth'
+import {
+    getDatabase,
+    connectDatabaseEmulator,
+    Database,
+} from 'firebase/database'
 
 export const config = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -21,8 +27,13 @@ export const config = {
 
 firebase.initializeApp(config)
 
-export const auth = getAuth()
-connectAuthEmulator(auth, 'http://localhost:9099')
+export const auth: Auth = getAuth()
+export const db: Database = getDatabase()
+
+if (window.location.hostname === 'localhost') {
+    connectAuthEmulator(auth, 'http://localhost:9099')
+    connectDatabaseEmulator(db, 'localhost', 9000)
+}
 
 export const Login = (dispatch: any) => {
     signInAnonymously(auth)
