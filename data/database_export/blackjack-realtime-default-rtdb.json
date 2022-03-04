@@ -9,15 +9,17 @@
             "room_id": "12345678"
         }
     },
-    "room_players": {
+    "roomPlayers": {
         "12345678": {
             "38XXG0zFHXHB8BBJ9rbLhvWk3kAt": {
-                "is_ready": true,
+                "isReady": true,
+                "avatar": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
                 "name": "愛媛太郎",
                 "role": "player1"
             },
             "YRMmsnfJ9tMgJrHYxDGY9uDP6dW7": {
-                "is_ready": true,
+                "isReady": true,
+                "avatar": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/492.png",
                 "name": "岡山太郎",
                 "role": "thief"
             }

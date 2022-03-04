@@ -4,60 +4,74 @@ import { db } from 'lib/firebase'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { Store } from 'stores'
 
-export interface RoomPlayer {
-    is_ready: boolean
+export interface PlayerStatus {
+    isReady: boolean
+    avatar: string
     name: string
     role: string
 }
 
 const WaitingRoom = () => {
+    const location = useLocation()
     const user = useSelector((state: Store) => state.user)
 
     // ref渡してデータを取得する
-    const memberRef = useDatabase('room_players' + '/' + '12345678')
+    const memberRef = useDatabase('roomPlayers' + '/' + '12345678')
     const members = useFetchData(memberRef)
 
-    const [name, setName] = useState('新規Player')
-    const [isReady, setIsReady] = useState(false)
-    const [thiefName, setThiefName] = useState('')
-    const [player1Name, setPlayer1Name] = useState('')
-    const [player2Name, setPlayer2Name] = useState('')
-    const [player3Name, setPlayer3Name] = useState('')
-    const [player4Name, setPlayer4Name] = useState('')
-    const [player5Name, setPlayer5Name] = useState('')
+    const initialStatus = {
+        isReady: false,
+        avatar: '',
+        name: '',
+        role: '',
+    }
+
+    const randomId = Math.floor(Math.random() * 500)
+    const [myStatus, setMyStatus] = useState({
+        isReady: false,
+        avatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${randomId}.png`,
+        name: '新規Player',
+        role: '',
+    })
+
+    // const [role, setRole] = useState('')
+    // const [isReady, setIsReady] = useState(false)
+    const [thiefStatus, setThiefStatus] = useState(initialStatus)
+    const [player1Status, setPlayer1Status] = useState(initialStatus)
+    const [player2Status, setPlayer2Status] = useState(initialStatus)
+    const [player3Status, setPlayer3Status] = useState(initialStatus)
+    const [player4Status, setPlayer4Status] = useState(initialStatus)
+    const [player5Status, setPlayer5Status] = useState(initialStatus)
 
     const inRoom = () => {
-        console.log('inRoom')
-        const roomRef = ref(db, 'room_players' + '/' + '12345678')
+        const roomRef = ref(db, 'roomPlayers' + '/' + '12345678')
         // const newRoomRef = push(roomRef)
         // set(newRoomRef, user.uid)
         update(roomRef, {
             [user.uid]: {
-                is_ready: false,
-                name: name,
+                isReady: false,
+                avatar: myStatus.avatar,
+                name: myStatus.name,
                 role: null,
             },
         })
     }
 
-    const setPlayerName = () => {
-        console.log('setPlayerName')
+    const setPlayerStatus = () => {
         const roomRef = ref(
             db,
-            'room_players' + '/' + '12345678' + '/' + user.uid,
+            'roomPlayers' + '/' + '12345678' + '/' + user.uid,
         )
-        update(roomRef, { name: name })
+        update(roomRef, { name: myStatus.name })
     }
 
     const setPlayerRole = (selectRole: string) => {
-        console.log('setPlayerRole')
-        console.log('Roleを' + selectRole + 'に変更します')
         const roomRef = ref(
             db,
-            'room_players' + '/' + '12345678' + '/' + user.uid,
+            'roomPlayers' + '/' + '12345678' + '/' + user.uid,
         )
         update(roomRef, { role: selectRole })
     }
@@ -65,44 +79,41 @@ const WaitingRoom = () => {
     const setPlayerIsReady = (submitIsReady: boolean) => {
         const roomRef = ref(
             db,
-            'room_players' + '/' + '12345678' + '/' + user.uid,
+            'roomPlayers' + '/' + '12345678' + '/' + user.uid,
         )
-        update(roomRef, { is_ready: submitIsReady })
+        update(roomRef, { isReady: submitIsReady })
     }
 
     useEffect(() => {
-        console.log('useEffect')
-        setThiefName('')
-        setPlayer1Name('')
-        setPlayer2Name('')
-        setPlayer3Name('')
-        setPlayer4Name('')
-        setPlayer5Name('')
+        setThiefStatus(initialStatus)
+        setPlayer1Status(initialStatus)
+        setPlayer2Status(initialStatus)
+        setPlayer3Status(initialStatus)
+        setPlayer4Status(initialStatus)
+        setPlayer5Status(initialStatus)
 
         Object.entries(members).map((member) => {
             if (member[0] === user.uid) {
-                console.log('Its me')
-                setName((member[1] as RoomPlayer).name)
-                setIsReady((member[1] as RoomPlayer).is_ready)
+                setMyStatus(member[1] as PlayerStatus)
             }
-            switch ((member[1] as RoomPlayer).role) {
+            switch ((member[1] as PlayerStatus).role) {
                 case 'thief':
-                    setThiefName((member[1] as RoomPlayer).name)
+                    setThiefStatus(member[1] as PlayerStatus)
                     break
                 case 'player1':
-                    setPlayer1Name((member[1] as RoomPlayer).name)
+                    setPlayer1Status(member[1] as PlayerStatus)
                     break
                 case 'player2':
-                    setPlayer2Name((member[1] as RoomPlayer).name)
+                    setPlayer2Status(member[1] as PlayerStatus)
                     break
                 case 'player3':
-                    setPlayer3Name((member[1] as RoomPlayer).name)
+                    setPlayer3Status(member[1] as PlayerStatus)
                     break
                 case 'player4':
-                    setPlayer4Name((member[1] as RoomPlayer).name)
+                    setPlayer4Status(member[1] as PlayerStatus)
                     break
                 case 'player5':
-                    setPlayer5Name((member[1] as RoomPlayer).name)
+                    setPlayer5Status(member[1] as PlayerStatus)
                     break
             }
         })
@@ -123,10 +134,19 @@ const WaitingRoom = () => {
             <h1>あなたの名前</h1>
             <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={myStatus.name}
+                readOnly={myStatus.isReady}
+                onChange={(e) =>
+                    setMyStatus((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                    }))
+                }
             />
-            <button disabled={!name.trim()} onClick={setPlayerName}>
+            <button
+                disabled={!myStatus.name.trim() || myStatus.isReady}
+                onClick={setPlayerStatus}
+            >
                 更新
             </button>
 
@@ -134,7 +154,11 @@ const WaitingRoom = () => {
             {Object.entries(members).map((member) => {
                 return (
                     <div key={member[0]}>
-                        <p>{(member[1] as RoomPlayer).name}</p>
+                        <img
+                            src={(member[1] as PlayerStatus).avatar}
+                            alt={(member[1] as PlayerStatus).name}
+                        />
+                        <p>{(member[1] as PlayerStatus).name}</p>
                         {JSON.stringify(member)}
                     </div>
                 )
@@ -142,57 +166,100 @@ const WaitingRoom = () => {
 
             <h1>みんなのRole</h1>
             <p>
-                怪盗: {thiefName}
-                {!thiefName && (
-                    <button onClick={() => setPlayerRole('thief')}>
+                怪盗: {thiefStatus.name}
+                {thiefStatus.isReady && <span>　✅</span>}
+                {!thiefStatus.name && (
+                    <button
+                        disabled={myStatus.isReady}
+                        onClick={() => setPlayerRole('thief')}
+                    >
                         立候補
                     </button>
                 )}
             </p>
             <p>
-                警察1: {player1Name}
-                {!player1Name && (
-                    <button onClick={() => setPlayerRole('player1')}>
+                警察1: {player1Status.name}
+                {player1Status.isReady && <span>　✅</span>}
+                {!player1Status.name && (
+                    <button
+                        disabled={myStatus.isReady}
+                        onClick={() => setPlayerRole('player1')}
+                    >
                         立候補
                     </button>
                 )}
             </p>
             <p>
-                警察2: {player2Name}
-                {!player2Name && (
-                    <button onClick={() => setPlayerRole('player2')}>
+                警察2: {player2Status.name}
+                {player2Status.isReady && <span>　✅</span>}
+                {!player2Status.name && (
+                    <button
+                        disabled={myStatus.isReady}
+                        onClick={() => setPlayerRole('player2')}
+                    >
                         立候補
                     </button>
                 )}
             </p>
             <p>
-                警察3: {player3Name}
-                {!player3Name && (
-                    <button onClick={() => setPlayerRole('player3')}>
+                警察3: {player3Status.name}
+                {player3Status.isReady && <span>　✅</span>}
+                {!player3Status.name && (
+                    <button
+                        disabled={myStatus.isReady}
+                        onClick={() => setPlayerRole('player3')}
+                    >
                         立候補
                     </button>
                 )}
             </p>
             <p>
-                警察4: {player4Name}
-                {!player4Name && (
-                    <button onClick={() => setPlayerRole('player4')}>
+                警察4: {player4Status.name}
+                {player4Status.isReady && <span>　✅</span>}
+                {!player4Status.name && (
+                    <button
+                        disabled={myStatus.isReady}
+                        onClick={() => setPlayerRole('player4')}
+                    >
                         立候補
                     </button>
                 )}
             </p>
             <p>
-                警察5: {player5Name}
-                {!player5Name && (
-                    <button onClick={() => setPlayerRole('player5')}>
+                警察5: {player5Status.name}
+                {player5Status.isReady && <span>　✅</span>}
+                {!player5Status.name && (
+                    <button
+                        disabled={myStatus.isReady}
+                        onClick={() => setPlayerRole('player5')}
+                    >
                         立候補
                     </button>
                 )}
             </p>
-            {isReady && <span>プレイヤーを待っています...</span>}
-            <button onClick={() => setPlayerIsReady(!isReady)}>
-                {isReady ? 'キャンセル' : '準備OK'}
+
+            <h1>私のRole</h1>
+            <p>{myStatus.role}</p>
+
+            {myStatus.isReady && <span>プレイヤーを待っています...</span>}
+            <button
+                disabled={!myStatus.role}
+                onClick={() => setPlayerIsReady(!myStatus.isReady)}
+            >
+                {myStatus.isReady ? 'キャンセル' : '準備OK'}
             </button>
+            {myStatus.isReady &&
+                thiefStatus.isReady &&
+                player1Status.isReady &&
+                player2Status.isReady &&
+                player3Status.isReady && (
+                    // player4Status.isReady && player5Status.isReady
+                    <Navigate
+                        to="/playroom"
+                        state={{ from: location }}
+                        replace
+                    />
+                )}
             <div style={{ height: '100px' }} />
         </div>
     )
