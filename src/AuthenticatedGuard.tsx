@@ -5,10 +5,7 @@ import { Store } from 'stores'
 
 const AuthenticatedGuard: FC = ({ children }) => {
     const user = useSelector((state: Store) => state.user)
-
-    const isAuthenticated = user.uid !== undefined
-    console.log(isAuthenticated)
-    console.log(user.uid)
+    const isAuthenticated = user && user.uid !== undefined
 
     const location = useLocation()
 

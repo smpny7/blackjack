@@ -8,14 +8,14 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { db } from './firebase'
 
-export const useDatabase = () => {
+export const useDatabase = (path: string) => {
     // 同じパスでは毎回同じ結果が得られるのでmemo化しておく
-    return useMemo(() => ref(db, 'rooms'), [])
+    return useMemo(() => ref(db, path), [])
 }
 
 export const useFetchData = (ref: DatabaseReference) => {
     console.log('useFetchData')
-    const [rooms, setRooms] = useState([])
+    const [rooms, setRooms] = useState({})
     useEffect(() => {
         // イベントリスナーを追加するにはonを使う
         onValue(ref, (snapshot: DataSnapshot) => {
@@ -25,7 +25,7 @@ export const useFetchData = (ref: DatabaseReference) => {
                 console.log(snapshot.val())
                 setRooms(snapshot.val())
             } else {
-                setRooms([])
+                setRooms({})
             }
         })
         return () => {
