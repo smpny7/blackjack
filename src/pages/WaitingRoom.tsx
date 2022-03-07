@@ -60,6 +60,84 @@ const WaitingRoom = () => {
         })
     }
 
+    const positionRef = useDatabase('positions' + '/' + '12345678')
+    const ternRef = useDatabase('terns' + '/' + '12345678')
+    const cardsRef = useDatabase('cards' + '/' + '12345678')
+
+    // const initialPositions = [
+    //     13, 16, 26, 29, 34, 50, 53, 94, 103, 112, 117, 132, 138, 141, 155, 174,
+    //     197, 198,
+    // ]
+    const initialPositions = [13, 16, 26, 29, 34, 50, 53, 94]
+    const shuffle = ([...array]) => {
+        for (let i = array.length - 1; i >= 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1))
+            ;[array[i], array[j]] = [array[j], array[i]]
+        }
+        return array
+    }
+    const initialSortedPositions = shuffle(initialPositions)
+
+    const setInitialPositions = () => {
+        update(positionRef, {
+            thief: initialSortedPositions[0],
+            player1: initialSortedPositions[1],
+            // TODO: player2, player3, player4, player5
+            // player2: initialSortedPositions[2],
+            // player3: initialSortedPositions[3],
+            // player4: initialSortedPositions[4],
+            // player5: initialSortedPositions[5],
+        })
+        update(ternRef, {
+            action: 'thief',
+            count: 1,
+        })
+        update(cardsRef, {
+            thief: {
+                underGround: 99,
+                bus: 99,
+                taxi: 99,
+                black: 5,
+                double: 2,
+            },
+            player1: {
+                underGround: 4,
+                bus: 8,
+                taxi: 10,
+                black: 0,
+                double: 0,
+            },
+            player2: {
+                underGround: 4,
+                bus: 8,
+                taxi: 10,
+                black: 0,
+                double: 0,
+            },
+            player3: {
+                underGround: 4,
+                bus: 8,
+                taxi: 10,
+                black: 0,
+                double: 0,
+            },
+            player4: {
+                underGround: 4,
+                bus: 8,
+                taxi: 10,
+                black: 0,
+                double: 0,
+            },
+            player5: {
+                underGround: 4,
+                bus: 8,
+                taxi: 10,
+                black: 0,
+                double: 0,
+            },
+        })
+    }
+
     const setPlayerStatus = () => {
         const roomRef = ref(
             db,
@@ -82,6 +160,7 @@ const WaitingRoom = () => {
             'roomPlayers' + '/' + '12345678' + '/' + user.uid,
         )
         update(roomRef, { isReady: submitIsReady })
+        if (myStatus.role === 'thief') setInitialPositions()
     }
 
     useEffect(() => {
@@ -255,7 +334,7 @@ const WaitingRoom = () => {
                 player3Status.isReady && (
                     // player4Status.isReady && player5Status.isReady
                     <Navigate
-                        to="/playroom"
+                        to="/play-room"
                         state={{ from: location }}
                         replace
                     />

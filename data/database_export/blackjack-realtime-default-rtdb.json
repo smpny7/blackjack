@@ -1,4 +1,50 @@
 {
+    "cards": {
+        "23456789": {
+            "thief": {
+                "underGround": 99,
+                "bus": 99,
+                "taxi": 99,
+                "black": 5,
+                "double": 2
+            },
+            "player1": {
+                "underGround": 4,
+                "bus": 8,
+                "taxi": 10,
+                "black": 0,
+                "double": 0
+            },
+            "player2": {
+                "underGround": 4,
+                "bus": 8,
+                "taxi": 10,
+                "black": 0,
+                "double": 0
+            },
+            "player3": {
+                "underGround": 4,
+                "bus": 8,
+                "taxi": 10,
+                "black": 0,
+                "double": 0
+            },
+            "player4": {
+                "underGround": 4,
+                "bus": 8,
+                "taxi": 10,
+                "black": 0,
+                "double": 0
+            },
+            "player5": {
+                "underGround": 4,
+                "bus": 8,
+                "taxi": 10,
+                "black": 0,
+                "double": 0
+            }
+        }
+    },
     "players": {
         "38XXG0zFHXHB8BBJ9rbLhvWk3kAt": {
             "created_at": "2020",
@@ -9,19 +55,29 @@
             "room_id": "12345678"
         }
     },
+    "positions": {
+        "23456789": {
+            "thief": 10,
+            "player1": 20,
+            "player2": 21,
+            "player3": 22,
+            "player4": 23,
+            "player5": 24
+        }
+    },
     "roomPlayers": {
         "12345678": {
             "38XXG0zFHXHB8BBJ9rbLhvWk3kAt": {
                 "isReady": true,
                 "avatar": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
                 "name": "愛媛太郎",
-                "role": "player1"
+                "role": "player2"
             },
             "YRMmsnfJ9tMgJrHYxDGY9uDP6dW7": {
                 "isReady": true,
                 "avatar": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/492.png",
                 "name": "岡山太郎",
-                "role": "thief"
+                "role": "player3"
             }
         }
     },

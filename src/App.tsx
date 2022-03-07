@@ -1,4 +1,5 @@
 import AuthenticatedGuard from 'AuthenticatedGuard'
+import PlayRoom from 'pages/PlayRoom'
 import WaitingRoom from 'pages/WaitingRoom'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
@@ -13,6 +14,14 @@ const App = () => {
                     element={
                         <AuthenticatedGuard>
                             <WaitingRoom />
+                        </AuthenticatedGuard>
+                    }
+                />
+                <Route
+                    path="/play-room"
+                    element={
+                        <AuthenticatedGuard>
+                            <PlayRoom />
                         </AuthenticatedGuard>
                     }
                 />

@@ -14,7 +14,6 @@ export const useDatabase = (path: string) => {
 }
 
 export const useFetchData = (ref: DatabaseReference) => {
-    console.log('useFetchData')
     const [rooms, setRooms] = useState({})
     useEffect(() => {
         // イベントリスナーを追加するにはonを使う
