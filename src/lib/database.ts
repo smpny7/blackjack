@@ -13,8 +13,8 @@ export const useDatabase = (path: string) => {
     return useMemo(() => ref(db, path), [])
 }
 
-export const useFetchData = (ref: DatabaseReference) => {
-    const [rooms, setRooms] = useState({})
+export const useFetchData = <T>(ref: DatabaseReference): T => {
+    const [rooms, setRooms] = useState<T>({} as T)
     useEffect(() => {
         // イベントリスナーを追加するにはonを使う
         onValue(ref, (snapshot: DataSnapshot) => {
@@ -24,7 +24,7 @@ export const useFetchData = (ref: DatabaseReference) => {
                 console.log(snapshot.val())
                 setRooms(snapshot.val())
             } else {
-                setRooms({})
+                setRooms({} as T)
             }
         })
         return () => {

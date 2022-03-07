@@ -20,7 +20,7 @@ const WaitingRoom = () => {
 
     // ref渡してデータを取得する
     const memberRef = useDatabase('roomPlayers' + '/' + '12345678')
-    const members = useFetchData(memberRef)
+    const members = useFetchData<Record<string, PlayerStatus>>(memberRef)
 
     const initialStatus = {
         isReady: false,

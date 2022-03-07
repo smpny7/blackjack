@@ -2,10 +2,35 @@ import { ref, update } from 'firebase/database'
 import { useDatabase, useFetchData } from 'lib/database'
 import { db } from 'lib/firebase'
 import { route } from 'lib/route'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { Store } from 'stores'
-import { PlayerStatus } from './WaitingRoom'
+
+interface PlayerStatus {
+    isReady: boolean
+    avatar: string
+    name: string
+    role: keyof Role
+}
+
+interface Role {
+    thief: string
+    player1: string
+    player2: string
+    player3: string
+    player4: string
+    player5: string
+}
+
+interface Cards {
+    thief: RemainCards
+    player1: RemainCards
+    player2: RemainCards
+    player3: RemainCards
+    player4: RemainCards
+    player5: RemainCards
+}
 
 interface Position {
     thief: number
@@ -16,7 +41,7 @@ interface Position {
     player5: number
 }
 
-interface TransferablePosition {
+export interface TransferablePosition {
     underGround: Array<number>
     bus: Array<number>
     taxi: Array<number>
@@ -28,7 +53,7 @@ interface Tern {
     count: number
 }
 
-interface Cards {
+interface RemainCards {
     black: number
     bus: number
     double: number
@@ -40,67 +65,48 @@ const PlayRoom = () => {
     const location = useLocation()
 
     const user = useSelector((state: Store) => state.user)
-    const memberRef = useDatabase(
-        'roomPlayers' + '/' + '12345678' + '/' + user.uid,
-    )
-    const myStatus = useFetchData(memberRef)
 
-    const positionsRef = useDatabase('positions' + '/' + '12345678')
-    const positions = useFetchData(positionsRef)
-
-    // const positionRef = useDatabase(
-    //     'positions' + '/' + '12345678' + '/' + (myStatus as PlayerStatus).role,
-    // )
-    // const position = useFetchData(positionRef)
-
-    const ternRef = useDatabase('terns' + '/' + '12345678')
-
-    const tern = useFetchData(ternRef)
-    console.log(tern)
-    // console.log('position')
-    console.log('myPosition')
-    const myRole = (myStatus as PlayerStatus).role
-    const myPosition = (positions as any)[myRole]
-    console.log(myPosition)
-    console.log(route[myPosition - 1]?.underGround)
+    const [isBlackCard, setIsBlackCard] = useState(false)
+    const [isSelectingDoubleCard, setIsSelectingDoubleCard] = useState(false)
 
     const cardsRef = useDatabase('cards' + '/' + '12345678')
-    const cards = useFetchData(cardsRef)
-    console.log('cards')
-    console.log(((cards as any)[myRole] as Cards)?.black)
+    const positionRef = useDatabase('positions' + '/' + '12345678')
+    const roomPlayersRef = useDatabase(
+        'roomPlayers' + '/' + '12345678' + '/' + user.uid,
+    )
+    const ternRef = useDatabase('terns' + '/' + '12345678')
 
+    const cards = useFetchData<Cards>(cardsRef)
+    const myStatus = useFetchData<PlayerStatus>(roomPlayersRef)
+    const position = useFetchData<Position>(positionRef)
+    const tern = useFetchData<Tern>(ternRef)
+
+    const myRole = myStatus.role
+    const myPosition = position[myRole]
     const isThief = myRole === 'thief'
-
-    const nextRole: string =
-        {
-            thief: 'player1',
-            player1: 'thief',
-            // player1: 'player2',
-            // player2: 'player3',
-            // player3: 'player4',
-            // player4: 'player5',
-            // player5: 'thief',
-        }[myRole] ?? ''
+    const nextRole: keyof Role = {
+        // TODO: player1: 'player2' as keyof Role,
+        thief: 'player1' as keyof Role,
+        player1: 'thief' as keyof Role,
+        player2: 'player3' as keyof Role,
+        player3: 'player4' as keyof Role,
+        player4: 'player5' as keyof Role,
+        player5: 'thief' as keyof Role,
+    }[myRole]
 
     const isGameOver =
-        ((positions as Position).thief === (positions as Position).player1 ||
-            (positions as Position).thief === (positions as Position).player2 ||
-            (positions as Position).thief === (positions as Position).player3 ||
-            (positions as Position).thief === (positions as Position).player4 ||
-            (positions as Position).thief ===
-                (positions as Position).player5) &&
-        (positions as Position).thief !== undefined
+        (position.thief === position.player1 ||
+            position.thief === position.player2 ||
+            position.thief === position.player3 ||
+            position.thief === position.player4 ||
+            position.thief === position.player5) &&
+        position.thief !== undefined
 
     const submitNextPosition = (
         transportation: string,
         remain: number,
         nextPosition: number,
     ) => {
-        console.log('position')
-        console.log(nextPosition)
-        console.log('nextRole')
-        console.log(nextRole)
-
         const transportationRef = ref(
             db,
             'cards' + '/' + '12345678' + '/' + myRole + '/',
@@ -110,10 +116,14 @@ const PlayRoom = () => {
         const positionRef = ref(db, 'positions' + '/' + '12345678')
         update(positionRef, { [myRole]: nextPosition })
 
-        const ternRef = ref(db, 'terns' + '/' + '12345678')
-        update(ternRef, { action: nextRole })
-        if (nextRole === 'thief')
-            update(ternRef, { count: (tern as Tern).count + 1 })
+        if (isSelectingDoubleCard) {
+            setIsSelectingDoubleCard(false)
+            update(transportationRef, { [transportation]: remain })
+        } else {
+            const ternRef = ref(db, 'terns' + '/' + '12345678')
+            update(ternRef, { action: nextRole })
+        }
+        if (nextRole === 'thief') update(ternRef, { count: tern.count + 1 })
     }
 
     return (
@@ -122,128 +132,136 @@ const PlayRoom = () => {
             <div style={{ height: '20px' }} />
             <img style={{ display: 'block' }} src="/map.png" alt="マップ" />
 
-            <h2>現在のターン: {(tern as Tern).count}</h2>
+            <h2>現在のターン: {tern.count}</h2>
 
-            {((cards as any)[myRole] as Cards)?.underGround > 0 && (
-                <p>地下鉄 ×{((cards as any)[myRole] as Cards).underGround}</p>
+            {cards[myRole]?.underGround > 0 && (
+                <p>地下鉄 ×{cards[myRole].underGround}</p>
             )}
-            {((cards as any)[myRole] as Cards)?.bus > 0 && (
-                <p>バス ×{((cards as any)[myRole] as Cards).bus}</p>
+            {cards[myRole]?.bus > 0 && <p>バス ×{cards[myRole].bus}</p>}
+            {cards[myRole]?.taxi > 0 && <p>タクシー ×{cards[myRole].taxi}</p>}
+            {cards[myRole]?.black > 0 && (
+                <p>ブラック・チケット ×{cards[myRole].black}</p>
             )}
-            {((cards as any)[myRole] as Cards)?.taxi > 0 && (
-                <p>タクシー ×{((cards as any)[myRole] as Cards).taxi}</p>
-            )}
-            {((cards as any)[myRole] as Cards)?.black > 0 && (
-                <p>
-                    ブラック・チケット ×
-                    {((cards as any)[myRole] as Cards).black}
-                </p>
-            )}
-            {((cards as any)[myRole] as Cards)?.double > 0 && (
-                <p>
-                    ダブル・ムーブ・カード ×
-                    {((cards as any)[myRole] as Cards).double}
-                </p>
+            {cards[myRole]?.double > 0 && (
+                <p>ダブル・ムーブ・カード ×{cards[myRole].double}</p>
             )}
 
-            {(tern as Tern).action == myRole && (
+            {tern.action == myRole && (
                 <>
                     <h2>あなたの番です</h2>
+                    {cards[myRole]?.black > 0 && (
+                        <>
+                            <input
+                                id="setBlackCard"
+                                type="checkbox"
+                                checked={isBlackCard}
+                                onChange={() => setIsBlackCard(!isBlackCard)}
+                            />
+                            <label htmlFor="setBlackCard">
+                                ブラックカードを使用（あと{cards[myRole].black}
+                                回使用できます）
+                            </label>
+                        </>
+                    )}
                     <div>
                         {route[myPosition - 1]?.underGround &&
-                            ((cards as any)[myRole] as Cards)?.underGround >
-                                0 &&
-                            (
-                                route[myPosition - 1] as TransferablePosition
-                            ).underGround.map((nextPosition) => {
-                                return (
-                                    <button
-                                        onClick={() =>
-                                            submitNextPosition(
-                                                'underGround',
-                                                (
-                                                    (cards as any)[
-                                                        myRole
-                                                    ] as Cards
-                                                )?.underGround - 1,
-                                                nextPosition,
+                            cards[myRole]?.underGround > 0 &&
+                            route[myPosition - 1].underGround.map(
+                                (nextPosition) => {
+                                    return (
+                                        <button
+                                            onClick={() =>
+                                                submitNextPosition(
+                                                    isSelectingDoubleCard
+                                                        ? 'double'
+                                                        : 'underGround',
+                                                    isSelectingDoubleCard
+                                                        ? cards[myRole]
+                                                              ?.double - 1
+                                                        : cards[myRole]
+                                                              ?.underGround - 1,
+                                                    nextPosition,
+                                                )
+                                            }
+                                            key={nextPosition}
+                                        >
+                                            {nextPosition} (地下鉄
+                                            {isBlackCard &&
+                                                ': ブラックカードを使用'}
                                             )
-                                        }
-                                        key={nextPosition}
-                                    >
-                                        {nextPosition} (地下鉄)
-                                    </button>
-                                )
-                            })}
+                                        </button>
+                                    )
+                                },
+                            )}
                     </div>
                     <div>
                         {route[myPosition - 1]?.bus &&
-                            ((cards as any)[myRole] as Cards)?.bus > 0 &&
-                            (
-                                route[myPosition - 1] as TransferablePosition
-                            ).bus.map((nextPosition) => {
+                            cards[myRole]?.bus > 0 &&
+                            route[myPosition - 1].bus.map((nextPosition) => {
                                 return (
                                     <button
                                         onClick={() =>
                                             submitNextPosition(
-                                                'bus',
-                                                (
-                                                    (cards as any)[
-                                                        myRole
-                                                    ] as Cards
-                                                )?.bus - 1,
+                                                isSelectingDoubleCard
+                                                    ? 'double'
+                                                    : 'bus',
+                                                isSelectingDoubleCard
+                                                    ? cards[myRole]?.double - 1
+                                                    : cards[myRole]?.bus - 1,
                                                 nextPosition,
                                             )
                                         }
                                         key={nextPosition}
                                     >
-                                        {nextPosition} (バス)
+                                        {nextPosition} (バス
+                                        {isBlackCard &&
+                                            ': ブラックカードを使用'}
+                                        )
                                     </button>
                                 )
                             })}
                     </div>
                     <div>
                         {route[myPosition - 1]?.taxi &&
-                            ((cards as any)[myRole] as Cards)?.taxi > 0 &&
-                            (
-                                route[myPosition - 1] as TransferablePosition
-                            ).taxi.map((nextPosition) => {
+                            cards[myRole]?.taxi > 0 &&
+                            route[myPosition - 1].taxi.map((nextPosition) => {
                                 return (
                                     <button
                                         onClick={() =>
                                             submitNextPosition(
-                                                'taxi',
-                                                (
-                                                    (cards as any)[
-                                                        myRole
-                                                    ] as Cards
-                                                )?.taxi - 1,
+                                                isSelectingDoubleCard
+                                                    ? 'double'
+                                                    : 'taxi',
+                                                isSelectingDoubleCard
+                                                    ? cards[myRole]?.double - 1
+                                                    : cards[myRole]?.taxi - 1,
                                                 nextPosition,
                                             )
                                         }
                                         key={nextPosition}
                                     >
-                                        {nextPosition} (タクシー)
+                                        {nextPosition} (タクシー
+                                        {isBlackCard &&
+                                            ': ブラックカードを使用'}
+                                        )
                                     </button>
                                 )
                             })}
                     </div>
                     <div>
                         {route[myPosition - 1]?.boat &&
-                            ((cards as any)[myRole] as Cards)?.black > 0 &&
-                            (
-                                route[myPosition - 1] as TransferablePosition
-                            ).boat.map((nextPosition) => {
+                            cards[myRole]?.black > 0 &&
+                            route[myPosition - 1].boat.map((nextPosition) => {
                                 return (
                                     <button
                                         onClick={() =>
                                             submitNextPosition(
-                                                'black',
-                                                (
-                                                    (cards as any)[
-                                                        myRole
-                                                    ] as Cards
-                                                )?.black - 1,
+                                                isSelectingDoubleCard
+                                                    ? 'double'
+                                                    : 'black',
+                                                isSelectingDoubleCard
+                                                    ? cards[myRole]?.double - 1
+                                                    : cards[myRole]?.black - 1,
                                                 nextPosition,
                                             )
                                         }
@@ -254,11 +272,21 @@ const PlayRoom = () => {
                                 )
                             })}
                     </div>
+                    {cards[myRole]?.double > 0 && (
+                        <button
+                            onClick={() => setIsSelectingDoubleCard(true)}
+                            disabled={isSelectingDoubleCard}
+                        >
+                            {isSelectingDoubleCard
+                                ? 'ダブルムーブカードを使用中'
+                                : 'ダブルムーブカードを使用'}
+                        </button>
+                    )}
                 </>
             )}
 
             <h2>現在のポジション</h2>
-            {Object.entries(positions).map((position) => {
+            {Object.entries(position).map((position) => {
                 return (
                     <div key={position[0]}>
                         {(position[0] !== 'thief' || isThief) && (

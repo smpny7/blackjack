@@ -1,4 +1,6 @@
-export const route = [
+import { TransferablePosition } from 'pages/PlayRoom'
+
+export const route: TransferablePosition[] = [
     {
         // 1
         underGround: [46],
