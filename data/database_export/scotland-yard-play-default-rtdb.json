@@ -45,6 +45,34 @@
             }
         }
     },
+    "history": {
+        "23456789": {
+            "0": {
+                "position": 12,
+                "card": "underGround"
+            },
+            "1": {
+                "position": 12,
+                "card": "underGround"
+            },
+            "2": {
+                "position": 12,
+                "card": "underGround"
+            },
+            "3": {
+                "position": 12,
+                "card": "underGround"
+            },
+            "4": {
+                "position": 12,
+                "card": "underGround"
+            },
+            "5": {
+                "position": 12,
+                "card": "underGround"
+            }
+        }
+    },
     "players": {
         "38XXG0zFHXHB8BBJ9rbLhvWk3kAt": {
             "created_at": "2020",
@@ -65,7 +93,7 @@
             "player5": 24
         }
     },
-    "roomPlayers": {
+    "playerStatus": {
         "12345678": {
             "38XXG0zFHXHB8BBJ9rbLhvWk3kAt": {
                 "isReady": true,

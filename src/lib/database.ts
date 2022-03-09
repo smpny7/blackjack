@@ -21,6 +21,7 @@ export const useFetchData = <T>(ref: DatabaseReference): T => {
             // パスに対する全データを含むsnapshotが渡される
             // ない場合はnullが変えるので存在をチェックしておく
             if (snapshot?.val()) {
+                console.log('データを取得しました')
                 console.log(snapshot.val())
                 setRooms(snapshot.val())
             } else {

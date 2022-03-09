@@ -19,7 +19,7 @@ const WaitingRoom = () => {
     const user = useSelector((state: Store) => state.user)
 
     // ref渡してデータを取得する
-    const memberRef = useDatabase('roomPlayers' + '/' + '12345678')
+    const memberRef = useDatabase('playerStatus' + '/' + '12345678')
     const members = useFetchData<Record<string, PlayerStatus>>(memberRef)
 
     const initialStatus = {
@@ -47,7 +47,7 @@ const WaitingRoom = () => {
     const [player5Status, setPlayer5Status] = useState(initialStatus)
 
     const inRoom = () => {
-        const roomRef = ref(db, 'roomPlayers' + '/' + '12345678')
+        const roomRef = ref(db, 'playerStatus' + '/' + '12345678')
         // const newRoomRef = push(roomRef)
         // set(newRoomRef, user.uid)
         update(roomRef, {
@@ -63,6 +63,7 @@ const WaitingRoom = () => {
     const positionRef = useDatabase('positions' + '/' + '12345678')
     const ternRef = useDatabase('terns' + '/' + '12345678')
     const cardsRef = useDatabase('cards' + '/' + '12345678')
+    const historyRef = useDatabase('history' + '/' + '12345678')
 
     // const initialPositions = [
     //     13, 16, 26, 29, 34, 50, 53, 94, 103, 112, 117, 132, 138, 141, 155, 174,
@@ -88,6 +89,13 @@ const WaitingRoom = () => {
             // player4: initialSortedPositions[4],
             // player5: initialSortedPositions[5],
         })
+        update(historyRef, {
+            0: {
+                position: initialSortedPositions[0],
+                card: null,
+            },
+        })
+
         update(ternRef, {
             action: 'thief',
             count: 1,
@@ -141,7 +149,7 @@ const WaitingRoom = () => {
     const setPlayerStatus = () => {
         const roomRef = ref(
             db,
-            'roomPlayers' + '/' + '12345678' + '/' + user.uid,
+            'playerStatus' + '/' + '12345678' + '/' + user.uid,
         )
         update(roomRef, { name: myStatus.name })
     }
@@ -149,7 +157,7 @@ const WaitingRoom = () => {
     const setPlayerRole = (selectRole: string) => {
         const roomRef = ref(
             db,
-            'roomPlayers' + '/' + '12345678' + '/' + user.uid,
+            'playerStatus' + '/' + '12345678' + '/' + user.uid,
         )
         update(roomRef, { role: selectRole })
     }
@@ -157,7 +165,7 @@ const WaitingRoom = () => {
     const setPlayerIsReady = (submitIsReady: boolean) => {
         const roomRef = ref(
             db,
-            'roomPlayers' + '/' + '12345678' + '/' + user.uid,
+            'playerStatus' + '/' + '12345678' + '/' + user.uid,
         )
         update(roomRef, { isReady: submitIsReady })
         if (myStatus.role === 'thief') setInitialPositions()
@@ -171,7 +179,7 @@ const WaitingRoom = () => {
         setPlayer4Status(initialStatus)
         setPlayer5Status(initialStatus)
 
-        Object.entries(members).map((member) => {
+        Object.entries(members).forEach((member) => {
             if (member[0] === user.uid) {
                 setMyStatus(member[1] as PlayerStatus)
             }

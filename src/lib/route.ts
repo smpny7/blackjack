@@ -1,19 +1,24 @@
-import { TransferablePosition } from 'pages/PlayRoom'
+interface TransferablePositions {
+    underGround: Array<number>
+    bus: Array<number>
+    taxi: Array<number>
+    boat: Array<number>
+}
 
-export const route: TransferablePosition[] = [
+export const route: TransferablePositions[] = [
     {
         // 1
         underGround: [46],
         bus: [46, 58],
         taxi: [8, 9],
-        boat: [],
+        boat: [2],
     },
     {
         // 2
         underGround: [],
         bus: [],
         taxi: [10, 20],
-        boat: [],
+        boat: [1],
     },
     {
         // 3
