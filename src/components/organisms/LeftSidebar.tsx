@@ -31,7 +31,7 @@ const LeftSidebar = (props: LeftSidebarProps) => (
         <div className="mt-12 pr-5 text-right">
             <HistoryButton />
         </div>
-
+        Debug:{' '}
         <Link className="mt-20" to="/">
             Home
         </Link>

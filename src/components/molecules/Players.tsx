@@ -22,7 +22,7 @@ const Players = (props: PlayersProps) => (
                         <div className="relative flex">
                             {props.action === playerStatus.role && (
                                 <span
-                                    className={`bg-${playerStatus.role} absolute inline-flex h-full w-full animate-ping rounded-full opacity-75`}
+                                    className={`bg-${playerStatus.role} absolute inline-flex h-full w-full animate-[ping_1.5s_linear_infinite] rounded-full opacity-50`}
                                 />
                             )}
                             <img

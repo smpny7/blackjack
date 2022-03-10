@@ -4,13 +4,13 @@ module.exports = {
   ],
   safelist: [
     {
-      pattern: /bg-(thief|player1|player2|player3|player4|player5)/,
+      pattern: /bg-(thief|player1|player2|player3|player4|player5)/
     },
     {
-      pattern: /border-(thief|player1|player2|player3|player4|player5)/,
+      pattern: /border-(thief|player1|player2|player3|player4|player5)/
     },
     {
-      pattern: /text-(thief|player1|player2|player3|player4|player5)/,
+      pattern: /text-(thief|player1|player2|player3|player4|player5)/
     }
   ],
   theme: {
@@ -22,12 +22,20 @@ module.exports = {
         'player3': '#E9A800',
         'player4': '#58CC58',
         'player5': '#D96FFF',
-        'history': '#24C316',
+        'history': '#24C316'
+      },
+      keyframes: {
+        ping: {
+          '75%, 100%': {
+            transform: 'scale(1.4)',
+            opacity: 0
+          }
+        }
       },
       spacing: {
-        '13': '3.25rem',
+        '13': '3.25rem'
       }
     },
   },
-  plugins: [],
+  plugins: []
 }
