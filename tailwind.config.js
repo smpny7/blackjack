@@ -7,6 +7,9 @@ module.exports = {
       pattern: /bg-(thief|player1|player2|player3|player4|player5)/,
     },
     {
+      pattern: /border-(thief|player1|player2|player3|player4|player5)/,
+    },
+    {
       pattern: /text-(thief|player1|player2|player3|player4|player5)/,
     }
   ],

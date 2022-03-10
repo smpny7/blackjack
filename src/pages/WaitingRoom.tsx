@@ -223,6 +223,7 @@ const WaitingRoom = () => {
                 type="text"
                 value={myStatus.name}
                 readOnly={myStatus.isReady}
+                maxLength={6}
                 onChange={(e) =>
                     setMyStatus((prev) => ({
                         ...prev,

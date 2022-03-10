@@ -1,6 +1,7 @@
 import LeftSidebar from 'components/organisms/LeftSidebar'
+import RightSidebar from 'components/organisms/RightSidebar'
 import { ref, update } from 'firebase/database'
-import { CARD, OPEN_TERN, TRANSPORTATION } from 'lib/const'
+import { CARD, OPEN_TERN, ROLES, TRANSPORTATION } from 'lib/const'
 import { useDatabase, useFetchData } from 'lib/database'
 import { db } from 'lib/firebase'
 import { route } from 'lib/route'
@@ -11,7 +12,7 @@ import {
 } from 'lib/util'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link, Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { Store } from 'stores'
 import { Role, Transportation } from 'types'
 import {
@@ -56,6 +57,13 @@ const PlayRoom = () => {
     const myRole = myStatus.role // 自分の役職
     const myPosition = positions[myRole] // 自分の位置
     const isThief = myRole === ('thief' as Role) // 自分が怪盗かどうか
+    const sortedPlayerStatuses = (
+        Object.entries(playerStatuses) as [string, IPlayerStatus][]
+    ).sort(
+        ([, playerStatus1], [, playerStatus2]) =>
+            Object.keys(ROLES).indexOf(playerStatus1.role) -
+            Object.keys(ROLES).indexOf(playerStatus2.role),
+    )
 
     // =========================================================================
 
@@ -119,21 +127,18 @@ const PlayRoom = () => {
                 <div className="inline-flex">
                     <LeftSidebar
                         action={tern.action}
-                        playerStatuses={playerStatuses}
+                        sortedPlayerStatuses={sortedPlayerStatuses}
                         tern={tern.count}
                     />
                     <div className="h-screen">
                         <div className="h-3/4">
                             <img
                                 style={{ display: 'block' }}
-                                className="h-full pt-10"
+                                className="h-full"
                                 src="/map.png"
                                 alt="マップ"
                             />
                         </div>
-
-                        <Link to="/">Home</Link>
-                        <div style={{ height: '20px' }} />
 
                         <h2>残りカード</h2>
                         {myRole in cards &&
@@ -286,7 +291,10 @@ const PlayRoom = () => {
                         )}
                         <div style={{ height: '100px' }} />
                     </div>
-                    <div className="w-64 flex-none bg-red-400">01</div>
+                    <RightSidebar
+                        action={tern.action}
+                        sortedPlayerStatuses={sortedPlayerStatuses}
+                    />
                 </div>
             </div>
         </div>
