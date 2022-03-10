@@ -335,18 +335,13 @@ const WaitingRoom = () => {
             >
                 {myStatus.isReady ? 'キャンセル' : '準備OK'}
             </button>
-            {myStatus.isReady &&
-                thiefStatus.isReady &&
-                player1Status.isReady &&
-                player2Status.isReady &&
-                player3Status.isReady && (
-                    // player4Status.isReady && player5Status.isReady
-                    <Navigate
-                        to="/play-room"
-                        state={{ from: location }}
-                        replace
-                    />
-                )}
+            {myStatus.isReady && thiefStatus.isReady && player1Status.isReady && (
+                // player2Status.isReady &&
+                // player3Status.isReady &&
+                // player4Status.isReady &&
+                // player5Status.isReady
+                <Navigate to="/play-room" state={{ from: location }} replace />
+            )}
             <div style={{ height: '100px' }} />
         </div>
     )

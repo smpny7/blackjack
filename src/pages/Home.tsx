@@ -1,6 +1,6 @@
 import { listenAuthState, Login, Logout } from 'lib/firebase'
 import { useDispatch, useSelector } from 'react-redux'
-import { Store } from './../stores'
+import { Store } from '../stores'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 

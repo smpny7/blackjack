@@ -104,8 +104,20 @@
             "YRMmsnfJ9tMgJrHYxDGY9uDP6dW7": {
                 "isReady": true,
                 "avatar": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/492.png",
-                "name": "岡山太郎",
+                "name": "岡山次郎",
                 "role": "player3"
+            },
+            "1RMmsnfJ9tMgJrHYxDGY9uDP6dW7": {
+                "isReady": true,
+                "avatar": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/38.png",
+                "name": "りんご",
+                "role": "player4"
+            },
+            "2RMmsnfJ9tMgJrHYxDGY9uDP6dW7": {
+                "isReady": true,
+                "avatar": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png",
+                "name": "ミカン",
+                "role": "player5"
             }
         }
     },

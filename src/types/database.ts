@@ -39,6 +39,10 @@ export interface IPlayerStatus {
     role: Role
 }
 
+export interface IPlayerStatuses {
+    [key: string]: IPlayerStatus
+}
+
 // ======================================================
 
 export interface IPosition {
@@ -53,7 +57,7 @@ export interface IPosition {
 // ======================================================
 
 export interface ITern {
-    action: string
+    action: Role
     count: number
 }
 

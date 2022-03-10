@@ -1,3 +1,4 @@
+import LeftSidebar from 'components/organisms/LeftSidebar'
 import { ref, update } from 'firebase/database'
 import { CARD, OPEN_TERN, TRANSPORTATION } from 'lib/const'
 import { useDatabase, useFetchData } from 'lib/database'
@@ -19,6 +20,7 @@ import {
     IHistories,
     IHistory,
     IPlayerStatus,
+    IPlayerStatuses,
     IPosition,
     ITern,
 } from 'types/database'
@@ -35,16 +37,18 @@ const PlayRoom = () => {
     // ▼ Realtime Database Ref ▼
     const cardsRef = useDatabase('cards' + '/' + '12345678')
     const historyRef = useDatabase('history' + '/' + '12345678')
-    const positionRef = useDatabase('positions' + '/' + '12345678')
-    const playerStatus = useDatabase(
+    const myStatusRef = useDatabase(
         'playerStatus' + '/' + '12345678' + '/' + user.uid,
     )
+    const playerStatusRef = useDatabase('playerStatus' + '/' + '12345678')
+    const positionRef = useDatabase('positions' + '/' + '12345678')
     const ternRef = useDatabase('terns' + '/' + '12345678')
 
     // ▼ Realtime Database Data ▼
     const cards = useFetchData<ICards>(cardsRef)
     const histories = useFetchData<IHistories>(historyRef)
-    const myStatus = useFetchData<IPlayerStatus>(playerStatus)
+    const myStatus = useFetchData<IPlayerStatus>(myStatusRef)
+    const playerStatuses = useFetchData<IPlayerStatuses>(playerStatusRef)
     const positions = useFetchData<IPosition>(positionRef)
     const tern = useFetchData<ITern>(ternRef)
 
@@ -102,137 +106,189 @@ const PlayRoom = () => {
     }
 
     return (
-        <div>
-            <Link to="/">Home</Link>
-            <div style={{ height: '20px' }} />
-            <img style={{ display: 'block' }} src="/map.png" alt="マップ" />
+        <div className="relative">
+            <div className="absolute h-screen w-screen">
+                <img
+                    className="h-full w-full bg-cover"
+                    src={`${process.env.PUBLIC_URL}/img/background.jpg`}
+                    alt="background"
+                />
+            </div>
 
-            <h2>現在のターン: {tern.count}</h2>
-
-            <h2>残りカード</h2>
-            {myRole in cards &&
-                (Object.entries(CARD) as [keyof ICard, string][]).map(
-                    ([transportationKey, transportationValue]) => (
-                        <p key={transportationKey}>
-                            {transportationValue} ×
-                            {cards[myRole][transportationKey]}
-                        </p>
-                    ),
-                )}
-
-            {tern.action === myRole && (
-                <>
-                    <h2>あなたの番です</h2>
-                    {cards[myRole]?.black > 0 && (
-                        <>
-                            <input
-                                id="setBlackCard"
-                                type="checkbox"
-                                checked={isSelectingBlackCard}
-                                onChange={() =>
-                                    setIsSelectingBlackCard(
-                                        !isSelectingBlackCard,
-                                    )
-                                }
+            <div className="relative text-center">
+                <div className="inline-flex">
+                    <LeftSidebar
+                        action={tern.action}
+                        playerStatuses={playerStatuses}
+                        tern={tern.count}
+                    />
+                    <div className="h-screen">
+                        <div className="h-3/4">
+                            <img
+                                style={{ display: 'block' }}
+                                className="h-full pt-10"
+                                src="/map.png"
+                                alt="マップ"
                             />
-                            <label htmlFor="setBlackCard">
-                                ブラックカードを使用（あと {cards[myRole].black}
-                                回使用できます）
-                            </label>
-                        </>
-                    )}
+                        </div>
 
-                    {myRole in cards &&
-                        (
-                            Object.entries(TRANSPORTATION) as [
-                                Transportation,
-                                string,
-                            ][]
-                        ).map(([transportationKey, transportationValue]) => (
-                            <div key={transportationKey}>
-                                {cards[myRole][
-                                    getCardKeyFromTransportation(
-                                        transportationKey,
-                                    )
-                                ] > 0 &&
-                                    route[myPosition - 1][
-                                        transportationKey
-                                    ].map((nextPosition: number) => (
-                                        <button
-                                            onClick={() =>
-                                                submitNextPosition(
-                                                    getCardKeyFromTransportation(
-                                                        transportationKey,
-                                                    ),
-                                                    nextPosition,
+                        <Link to="/">Home</Link>
+                        <div style={{ height: '20px' }} />
+
+                        <h2>残りカード</h2>
+                        {myRole in cards &&
+                            (
+                                Object.entries(CARD) as [keyof ICard, string][]
+                            ).map(
+                                ([transportationKey, transportationValue]) => (
+                                    <p key={transportationKey}>
+                                        {transportationValue} ×
+                                        {cards[myRole][transportationKey]}
+                                    </p>
+                                ),
+                            )}
+
+                        {tern.action === myRole && (
+                            <>
+                                <h2>あなたの番です</h2>
+                                {cards[myRole]?.black > 0 && (
+                                    <>
+                                        <input
+                                            id="setBlackCard"
+                                            type="checkbox"
+                                            checked={isSelectingBlackCard}
+                                            onChange={() =>
+                                                setIsSelectingBlackCard(
+                                                    !isSelectingBlackCard,
                                                 )
                                             }
-                                            key={nextPosition}
-                                        >
-                                            {nextPosition} (
-                                            {transportationValue}
-                                            {isSelectingBlackCard &&
-                                                transportationKey !==
-                                                    ('boat' as Transportation) &&
-                                                ': ブラックカードを使用'}
-                                            )
-                                        </button>
-                                    ))}
-                            </div>
-                        ))}
+                                        />
+                                        <label htmlFor="setBlackCard">
+                                            ブラックカードを使用（あと{' '}
+                                            {cards[myRole].black}
+                                            回使用できます）
+                                        </label>
+                                    </>
+                                )}
 
-                    {cards[myRole]?.double > 0 && (
-                        <button
-                            onClick={() => setIsSelectingDoubleCard(true)}
-                            disabled={isSelectingDoubleCard}
-                        >
-                            {isSelectingDoubleCard
-                                ? 'ダブルムーブカードを使用中'
-                                : 'ダブルムーブカードを使用'}
-                        </button>
-                    )}
-                </>
-            )}
+                                {myRole in cards &&
+                                    (
+                                        Object.entries(TRANSPORTATION) as [
+                                            Transportation,
+                                            string,
+                                        ][]
+                                    ).map(
+                                        ([
+                                            transportationKey,
+                                            transportationValue,
+                                        ]) => (
+                                            <div key={transportationKey}>
+                                                {cards[myRole][
+                                                    getCardKeyFromTransportation(
+                                                        transportationKey,
+                                                    )
+                                                ] > 0 &&
+                                                    route[myPosition - 1][
+                                                        transportationKey
+                                                    ].map(
+                                                        (
+                                                            nextPosition: number,
+                                                        ) => (
+                                                            <button
+                                                                onClick={() =>
+                                                                    submitNextPosition(
+                                                                        getCardKeyFromTransportation(
+                                                                            transportationKey,
+                                                                        ),
+                                                                        nextPosition,
+                                                                    )
+                                                                }
+                                                                key={
+                                                                    nextPosition
+                                                                }
+                                                            >
+                                                                {nextPosition} (
+                                                                {
+                                                                    transportationValue
+                                                                }
+                                                                {isSelectingBlackCard &&
+                                                                    transportationKey !==
+                                                                        ('boat' as Transportation) &&
+                                                                    ': ブラックカードを使用'}
+                                                                )
+                                                            </button>
+                                                        ),
+                                                    )}
+                                            </div>
+                                        ),
+                                    )}
 
-            <h2>現在のポジション</h2>
-            {(Object.entries(positions) as [Role, number][]).map(
-                ([positionKey, positionValue]) => (
-                    <div key={positionKey}>
-                        {(isThief || positionKey !== ('thief' as Role)) && (
-                            <p>
-                                {positionKey}: {positionValue}
-                            </p>
+                                {cards[myRole]?.double > 0 && (
+                                    <button
+                                        onClick={() =>
+                                            setIsSelectingDoubleCard(true)
+                                        }
+                                        disabled={isSelectingDoubleCard}
+                                    >
+                                        {isSelectingDoubleCard
+                                            ? 'ダブルムーブカードを使用中'
+                                            : 'ダブルムーブカードを使用'}
+                                    </button>
+                                )}
+                            </>
                         )}
+
+                        <h2>現在のポジション</h2>
+                        {(Object.entries(positions) as [Role, number][]).map(
+                            ([positionKey, positionValue]) => (
+                                <div key={positionKey}>
+                                    {(isThief ||
+                                        positionKey !== ('thief' as Role)) && (
+                                        <p>
+                                            {positionKey}: {positionValue}
+                                        </p>
+                                    )}
+                                </div>
+                            ),
+                        )}
+
+                        <h2>怪盗のカード使用履歴</h2>
+                        <table style={{ border: 'black solid 1px' }}>
+                            <tr>
+                                <th>ターン</th>
+                                <th>使用カード</th>
+                                <th>位置</th>
+                            </tr>
+                            {(
+                                Object.entries(histories) as [
+                                    string,
+                                    IHistory,
+                                ][]
+                            ).map(([index, history]) => (
+                                <tr key={index}>
+                                    <td>{index}</td>
+                                    <td>{history?.card ?? '初期ポジション'}</td>
+                                    <td>
+                                        {OPEN_TERN.includes(history.position)
+                                            ? history.position
+                                            : '？'}
+                                    </td>
+                                </tr>
+                            ))}
+                        </table>
+
+                        {judgeIsGameOver(positions) && (
+                            <Navigate
+                                to="/result"
+                                state={{ from: location }}
+                                replace
+                            />
+                        )}
+                        <div style={{ height: '100px' }} />
                     </div>
-                ),
-            )}
-
-            <h2>怪盗のカード使用履歴</h2>
-            <table style={{ border: 'black solid 1px' }}>
-                <tr>
-                    <th>ターン</th>
-                    <th>使用カード</th>
-                    <th>位置</th>
-                </tr>
-                {(Object.entries(histories) as [string, IHistory][]).map(
-                    ([index, history]) => (
-                        <tr key={index}>
-                            <td>{index}</td>
-                            <td>{history?.card ?? '初期ポジション'}</td>
-                            <td>
-                                {OPEN_TERN.includes(history.position)
-                                    ? history.position
-                                    : '？'}
-                            </td>
-                        </tr>
-                    ),
-                )}
-            </table>
-
-            {judgeIsGameOver(positions) && (
-                <Navigate to="/result" state={{ from: location }} replace />
-            )}
-            <div style={{ height: '100px' }} />
+                    <div className="w-64 flex-none bg-red-400">01</div>
+                </div>
+            </div>
         </div>
     )
 }
