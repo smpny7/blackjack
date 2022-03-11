@@ -22,6 +22,7 @@ module.exports = {
         'player3': '#E9A800',
         'player4': '#58CC58',
         'player5': '#D96FFF',
+        'accent': '#61B0FF',
         'history': '#24C316'
       },
       keyframes: {
@@ -37,5 +38,8 @@ module.exports = {
       }
     },
   },
-  plugins: []
+  daisyui: {
+    themes: false,
+  },
+  plugins: [require('daisyui')]
 }

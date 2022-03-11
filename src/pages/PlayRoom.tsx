@@ -1,3 +1,4 @@
+import CenterContents from 'components/organisms/CenterContents'
 import LeftSidebar from 'components/organisms/LeftSidebar'
 import RightSidebar from 'components/organisms/RightSidebar'
 import { ref, update } from 'firebase/database'
@@ -131,14 +132,12 @@ const PlayRoom = () => {
                         tern={tern.count}
                     />
                     <div className="h-screen">
-                        <div className="h-3/4">
-                            <img
-                                style={{ display: 'block' }}
-                                className="h-full"
-                                src="/map.png"
-                                alt="マップ"
-                            />
-                        </div>
+                        <CenterContents
+                            cards={cards}
+                            myRole={myRole}
+                            myPosition={myPosition}
+                            submitNextPosition={submitNextPosition}
+                        />
 
                         <h2>残りカード</h2>
                         {myRole in cards &&
