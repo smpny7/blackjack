@@ -1,15 +1,22 @@
 import { Role, Transportation } from 'types'
-import { ICard, IPosition } from 'types/database'
+import { ICard, IPosition, ITern } from 'types/database'
 
-export const getNextRole = (role: Role): Role =>
-    ({
-        thief: 'player1' as Role,
-        player1: 'thief' as Role, // TODO: thief -> player2
-        player2: 'player3' as Role,
-        player3: 'player4' as Role,
-        player4: 'player5' as Role,
-        player5: 'thief' as Role,
-    }[role])
+export const isTern = (role: Role, tern: ITern): boolean => {
+    switch (role) {
+        case 'thief':
+            return tern.action === 'thief'
+        case 'player1':
+            return tern.action === 'player' && !tern.hasMoved.player1
+        case 'player2':
+            return tern.action === 'player' && !tern.hasMoved.player2
+        case 'player3':
+            return tern.action === 'player' && !tern.hasMoved.player3
+        case 'player4':
+            return tern.action === 'player' && !tern.hasMoved.player4
+        case 'player5':
+            return tern.action === 'player' && !tern.hasMoved.player5
+    }
+}
 
 export const getCardKeyFromTransportation = (
     transportationKey: Transportation,

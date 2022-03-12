@@ -1,9 +1,9 @@
 import Players from 'components/molecules/Players'
-import { Role } from 'types'
+import { Position } from 'types'
 import { IPlayerStatus } from 'types/database'
 
 interface RightSidebarProps {
-    action: Role
+    action: Position
     sortedPlayerStatuses: [string, IPlayerStatus][]
 }
 

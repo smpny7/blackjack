@@ -1,8 +1,8 @@
-import { Role } from 'types'
+import { Position } from 'types'
 import { IPlayerStatus } from 'types/database'
 
 interface PlayersProps {
-    action: Role
+    action: Position
     playerStatuses: [string, IPlayerStatus][]
     titleSrc: string
     titleAlt: string

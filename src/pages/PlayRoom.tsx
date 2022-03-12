@@ -6,16 +6,12 @@ import { CARD, OPEN_TERN, ROLES, TRANSPORTATION } from 'lib/const'
 import { useDatabase, useFetchData } from 'lib/database'
 import { db } from 'lib/firebase'
 import { route } from 'lib/route'
-import {
-    getCardKeyFromTransportation,
-    getNextRole,
-    judgeIsGameOver,
-} from 'lib/util'
+import { getCardKeyFromTransportation, isTern, judgeIsGameOver } from 'lib/util'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Store } from 'stores'
-import { Role, Transportation } from 'types'
+import { Position, Role, Transportation } from 'types'
 import {
     ICard,
     ICards,
@@ -38,6 +34,9 @@ const PlayRoom = () => {
 
     // ▼ Realtime Database Ref ▼
     const cardsRef = useDatabase('cards' + '/' + '12345678')
+    const hasMovedRef = useDatabase(
+        'terns' + '/' + '12345678' + '/' + 'hasMoved',
+    )
     const historyRef = useDatabase('history' + '/' + '12345678')
     const myStatusRef = useDatabase(
         'playerStatus' + '/' + '12345678' + '/' + user.uid,
@@ -87,14 +86,13 @@ const PlayRoom = () => {
         update(positionRef, { [myRole]: nextPosition })
 
         // ▼ 使用履歴を更新 ▼
-        if (myRole === ('thief' as Role)) {
+        if (isThief)
             update(historyRef, {
                 [tern.count]: {
                     position: nextPosition,
                     card: transportation,
                 },
             })
-        }
 
         if (isSelectingDoubleCard) {
             // ▼ ダブルカードを消費 ▼
@@ -102,13 +100,36 @@ const PlayRoom = () => {
                 double: cards[myRole].double - 1,
             })
         } else {
-            // ▼ 操作する人を更新 ▼
-            update(ternRef, { action: getNextRole(myRole) })
-        }
+            if (isThief) {
+                update(ternRef, {
+                    action: 'player' as Role,
+                })
+                update(ternRef, {
+                    hasMoved: {
+                        thief: true,
+                        player1: false,
+                        player2: true, // false
+                        player3: true, // false
+                        player4: true, // false
+                        player5: true, // false
+                    },
+                })
+            } else {
+                update(hasMovedRef, { [myRole]: true })
+                if (
+                    (Object.entries(tern.hasMoved) as [Role, boolean][]).filter(
+                        ([_, hasMoved]) => !hasMoved,
+                    ).length === 1
+                ) {
+                    update(ternRef, {
+                        action: 'thief' as Position,
+                    })
 
-        // ▼ ターン数を更新 ▼
-        if (getNextRole(myRole) === ('thief' as Role))
-            update(ternRef, { count: tern.count + 1 })
+                    // ▼ ターン数を更新 ▼
+                    update(ternRef, { count: tern.count + 1 })
+                }
+            }
+        }
 
         setIsSelectingBlackCard(false)
         setIsSelectingDoubleCard(false)
@@ -128,8 +149,10 @@ const PlayRoom = () => {
                 <div className="inline-flex">
                     <LeftSidebar
                         action={tern.action}
+                        hasMoved={tern.hasMoved}
+                        myRole={myRole}
                         sortedPlayerStatuses={sortedPlayerStatuses}
-                        tern={tern.count}
+                        tern={tern}
                     />
                     <div className="h-screen">
                         <CenterContents
@@ -152,7 +175,7 @@ const PlayRoom = () => {
                                 ),
                             )}
 
-                        {tern.action === myRole && (
+                        {tern.hasMoved && isTern(myRole, tern) && (
                             <>
                                 <h2>あなたの番です</h2>
                                 {cards[myRole]?.black > 0 && (

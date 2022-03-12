@@ -121,5 +121,19 @@
             }
         }
     },
-    "rooms": { "12345678": "Aルーム", "23456789": "Bルーム" }
+    "rooms": { "12345678": "Aルーム", "23456789": "Bルーム" },
+    "terns": {
+        "23456789": {
+            "action": "thief",
+            "hasMoved": {
+                "thief": true,
+                "player1": false,
+                "player2": false,
+                "player3": false,
+                "player4": false,
+                "player5": false
+            },
+            "count": 1
+        }
+    }
 }

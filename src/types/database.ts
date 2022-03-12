@@ -1,22 +1,13 @@
+import { Card, Position, Role } from 'types'
+
 // ======================================================
 
-import { Role } from 'types'
-
-export interface ICard {
-    black: number
-    bus: number
-    double: number
-    taxi: number
-    underGround: number
+export type ICard = {
+    [key in Card]: number
 }
 
-export interface ICards {
-    thief: ICard
-    player1: ICard
-    player2: ICard
-    player3: ICard
-    player4: ICard
-    player5: ICard
+export type ICards = {
+    [key in Role]: ICard
 }
 
 // ======================================================
@@ -45,20 +36,20 @@ export interface IPlayerStatuses {
 
 // ======================================================
 
-export interface IPosition {
-    thief: number
-    player1: number
-    player2: number
-    player3: number
-    player4: number
-    player5: number
+export type IPosition = {
+    [key in Role]: number
 }
 
 // ======================================================
 
+export type IHasMoved = {
+    [key in Role]: boolean
+}
+
 export interface ITern {
-    action: Role
+    action: Position
     count: number
+    hasMoved: IHasMoved
 }
 
 // ======================================================

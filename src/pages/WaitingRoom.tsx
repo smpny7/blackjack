@@ -84,7 +84,7 @@ const WaitingRoom = () => {
             thief: initialSortedPositions[0],
             player1: initialSortedPositions[1],
             // TODO: player2, player3, player4, player5
-            // player2: initialSortedPositions[2],
+            player2: initialSortedPositions[2],
             // player3: initialSortedPositions[3],
             // player4: initialSortedPositions[4],
             // player5: initialSortedPositions[5],
@@ -98,6 +98,14 @@ const WaitingRoom = () => {
 
         update(ternRef, {
             action: 'thief',
+            hasMoved: {
+                thief: true,
+                player1: false,
+                player2: true,
+                player3: true,
+                player4: true,
+                player5: true,
+            },
             count: 1,
         })
         update(cardsRef, {

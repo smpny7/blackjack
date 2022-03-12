@@ -1,5 +1,7 @@
 export type Card = 'underGround' | 'bus' | 'taxi' | 'black' | 'double'
 
+export type Position = 'thief' | 'player'
+
 export type Role =
     | 'thief'
     | 'player1'
