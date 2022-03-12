@@ -316,6 +316,7 @@ const PlayRoom = () => {
                     <RightSidebar
                         action={tern.action}
                         sortedPlayerStatuses={sortedPlayerStatuses}
+                        tern={tern}
                     />
                 </div>
             </div>

@@ -1,10 +1,11 @@
 import Players from 'components/molecules/Players'
 import { Position } from 'types'
-import { IPlayerStatus } from 'types/database'
+import { IPlayerStatus, ITern } from 'types/database'
 
 interface RightSidebarProps {
     action: Position
     sortedPlayerStatuses: [string, IPlayerStatus][]
+    tern: ITern
 }
 
 const RightSidebar = (props: RightSidebarProps) => {
@@ -19,6 +20,7 @@ const RightSidebar = (props: RightSidebarProps) => {
             <div className="mt-10">
                 <Players
                     action={props.action}
+                    tern={props.tern}
                     titleSrc={`${process.env.PUBLIC_URL}/img/label_thief.png`}
                     titleAlt="怪盗X"
                     playerStatuses={thiefStatuses}
@@ -27,6 +29,7 @@ const RightSidebar = (props: RightSidebarProps) => {
             <div className="mt-4">
                 <Players
                     action={props.action}
+                    tern={props.tern}
                     titleSrc={`${process.env.PUBLIC_URL}/img/label_player.png`}
                     titleAlt="刑事"
                     playerStatuses={playerStatuses}

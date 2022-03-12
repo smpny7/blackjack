@@ -1,9 +1,11 @@
+import { isTern } from 'lib/util'
 import { Position } from 'types'
-import { IPlayerStatus } from 'types/database'
+import { IPlayerStatus, ITern } from 'types/database'
 
 interface PlayersProps {
     action: Position
     playerStatuses: [string, IPlayerStatus][]
+    tern: ITern
     titleSrc: string
     titleAlt: string
 }
@@ -20,7 +22,7 @@ const Players = (props: PlayersProps) => (
                 <div className="mb-3 mt-2" key={index}>
                     <div className="px-2">
                         <div className="relative flex">
-                            {props.action === playerStatus.role && (
+                            {isTern(playerStatus.role, props.tern) && (
                                 <span
                                     className={`bg-${playerStatus.role} absolute inline-flex h-full w-full animate-[ping_1.5s_linear_infinite] rounded-full opacity-50`}
                                 />
