@@ -2,16 +2,15 @@ import CenterContents from 'components/organisms/CenterContents'
 import LeftSidebar from 'components/organisms/LeftSidebar'
 import RightSidebar from 'components/organisms/RightSidebar'
 import { ref, update } from 'firebase/database'
-import { CARD, OPEN_TERN, ROLES, TRANSPORTATION } from 'lib/const'
+import { OPEN_TERN, ROLES } from 'lib/const'
 import { useDatabase, useFetchData } from 'lib/database'
 import { db } from 'lib/firebase'
-import { route } from 'lib/route'
-import { getCardKeyFromTransportation, isTern, judgeIsGameOver } from 'lib/util'
+import { isTern, judgeIsGameOver } from 'lib/util'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Store } from 'stores'
-import { Position, Role, Transportation } from 'types'
+import { Position, Role } from 'types'
 import {
     ICard,
     ICards,
@@ -157,113 +156,13 @@ const PlayRoom = () => {
                     <div className="h-screen">
                         <CenterContents
                             cards={cards}
+                            isMyTern={isTern(myRole, tern)}
                             myRole={myRole}
                             myPosition={myPosition}
                             submitNextPosition={submitNextPosition}
+                            isSelectingDoubleCard={isSelectingDoubleCard}
+                            setIsSelectingDoubleCard={setIsSelectingDoubleCard}
                         />
-
-                        <h2>残りカード</h2>
-                        {myRole in cards &&
-                            (
-                                Object.entries(CARD) as [keyof ICard, string][]
-                            ).map(
-                                ([transportationKey, transportationValue]) => (
-                                    <p key={transportationKey}>
-                                        {transportationValue} ×
-                                        {cards[myRole][transportationKey]}
-                                    </p>
-                                ),
-                            )}
-
-                        {tern.hasMoved && isTern(myRole, tern) && (
-                            <>
-                                <h2>あなたの番です</h2>
-                                {cards[myRole]?.black > 0 && (
-                                    <>
-                                        <input
-                                            id="setBlackCard"
-                                            type="checkbox"
-                                            checked={isSelectingBlackCard}
-                                            onChange={() =>
-                                                setIsSelectingBlackCard(
-                                                    !isSelectingBlackCard,
-                                                )
-                                            }
-                                        />
-                                        <label htmlFor="setBlackCard">
-                                            ブラックカードを使用（あと{' '}
-                                            {cards[myRole].black}
-                                            回使用できます）
-                                        </label>
-                                    </>
-                                )}
-
-                                {myRole in cards &&
-                                    (
-                                        Object.entries(TRANSPORTATION) as [
-                                            Transportation,
-                                            string,
-                                        ][]
-                                    ).map(
-                                        ([
-                                            transportationKey,
-                                            transportationValue,
-                                        ]) => (
-                                            <div key={transportationKey}>
-                                                {cards[myRole][
-                                                    getCardKeyFromTransportation(
-                                                        transportationKey,
-                                                    )
-                                                ] > 0 &&
-                                                    route[myPosition - 1][
-                                                        transportationKey
-                                                    ].map(
-                                                        (
-                                                            nextPosition: number,
-                                                        ) => (
-                                                            <button
-                                                                onClick={() =>
-                                                                    submitNextPosition(
-                                                                        getCardKeyFromTransportation(
-                                                                            transportationKey,
-                                                                        ),
-                                                                        nextPosition,
-                                                                    )
-                                                                }
-                                                                key={
-                                                                    nextPosition
-                                                                }
-                                                            >
-                                                                {nextPosition} (
-                                                                {
-                                                                    transportationValue
-                                                                }
-                                                                {isSelectingBlackCard &&
-                                                                    transportationKey !==
-                                                                        ('boat' as Transportation) &&
-                                                                    ': ブラックカードを使用'}
-                                                                )
-                                                            </button>
-                                                        ),
-                                                    )}
-                                            </div>
-                                        ),
-                                    )}
-
-                                {cards[myRole]?.double > 0 && (
-                                    <button
-                                        onClick={() =>
-                                            setIsSelectingDoubleCard(true)
-                                        }
-                                        disabled={isSelectingDoubleCard}
-                                    >
-                                        {isSelectingDoubleCard
-                                            ? 'ダブルムーブカードを使用中'
-                                            : 'ダブルムーブカードを使用'}
-                                    </button>
-                                )}
-                            </>
-                        )}
 
                         <h2>現在のポジション</h2>
                         {(Object.entries(positions) as [Role, number][]).map(
