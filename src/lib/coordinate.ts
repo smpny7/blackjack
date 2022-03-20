@@ -1,9 +1,9 @@
-interface TransferablePositions {
+interface Coordinate {
     x: number
     y: number
 }
 
-export const position: TransferablePositions[] = [
+export const coordinate: Coordinate[] = [
     {
         // 1
         x: 2.303523035,

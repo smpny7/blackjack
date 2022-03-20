@@ -159,24 +159,12 @@ const PlayRoom = () => {
                             isMyTern={isTern(myRole, tern)}
                             myRole={myRole}
                             myPosition={myPosition}
+                            isThief={isThief}
+                            positions={positions}
                             submitNextPosition={submitNextPosition}
                             isSelectingDoubleCard={isSelectingDoubleCard}
                             setIsSelectingDoubleCard={setIsSelectingDoubleCard}
                         />
-
-                        <h2>現在のポジション</h2>
-                        {(Object.entries(positions) as [Role, number][]).map(
-                            ([positionKey, positionValue]) => (
-                                <div key={positionKey}>
-                                    {(isThief ||
-                                        positionKey !== ('thief' as Role)) && (
-                                        <p>
-                                            {positionKey}: {positionValue}
-                                        </p>
-                                    )}
-                                </div>
-                            ),
-                        )}
 
                         <h2>怪盗のカード使用履歴</h2>
                         <table style={{ border: 'black solid 1px' }}>
