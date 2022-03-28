@@ -1,9 +1,9 @@
 import { CARD } from 'lib/const'
 import { route } from 'lib/route'
-import { confirmAlert } from 'react-confirm-alert'
 import { Role, Transportation } from 'types'
 import { ICard, ICards } from 'types/database'
-import 'react-confirm-alert/src/react-confirm-alert.css'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 interface SelectBoxProps {
     cardKey: keyof ICard
@@ -34,6 +34,8 @@ const SelectBox = (props: SelectBoxProps) => {
         return 0
     })
 
+    const MySwal = withReactContent(Swal)
+
     return (
         <div className="grid grid-cols-2 gap-4" key={props.cardKey}>
             <div className="text-left">
@@ -58,29 +60,36 @@ const SelectBox = (props: SelectBoxProps) => {
                 <select
                     className="select select-bordered ml-4 w-4/5 max-w-xs"
                     onChange={(e) =>
-                        confirmAlert({
+                        MySwal.fire({
                             title: '確認',
-                            message: `${CARD[props.cardKey]}を使用して${
+                            text: `${CARD[props.cardKey]}を使用して${
                                 e.target.value
                             }に移動しますか？`,
-                            buttons: [
-                                {
-                                    label: 'はい',
-                                    onClick: () => {
-                                        props.submitNextPosition(
-                                            props.cardKey,
-                                            e.target.value,
-                                        )
-                                        e.target.value = '0'
-                                    },
-                                },
-                                {
-                                    label: 'いいえ',
-                                    onClick: () => {
-                                        e.target.value = '0'
-                                    },
-                                },
-                            ],
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonAriaLabel: 'はい',
+                            confirmButtonText: 'はい',
+                            cancelButtonColor: '#d33',
+                            cancelButtonText: 'いいえ',
+                            cancelButtonAriaLabel: 'いいえ',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                props.submitNextPosition(
+                                    props.cardKey,
+                                    e.target.value,
+                                )
+                                MySwal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: `${CARD[props.cardKey]}を使用して${
+                                        e.target.value
+                                    }に移動しました`,
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                })
+                            }
+                            e.target.value = '0'
                         })
                     }
                     disabled={
@@ -118,21 +127,30 @@ const SelectBox = (props: SelectBoxProps) => {
             {props.cardKey === 'double' && (
                 <button
                     onClick={() =>
-                        confirmAlert({
+                        MySwal.fire({
                             title: '確認',
-                            message: `${CARD[props.cardKey]}を使用しますか？`,
-                            buttons: [
-                                {
-                                    label: 'はい',
-                                    onClick: () => {
-                                        props.setIsSelectingDoubleCard(true)
-                                    },
-                                },
-                                {
-                                    label: 'いいえ',
-                                    onClick: () => {},
-                                },
-                            ],
+                            text: `${CARD[props.cardKey]}を使用しますか？`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonAriaLabel: 'はい',
+                            confirmButtonText: 'はい',
+                            cancelButtonColor: '#d33',
+                            cancelButtonText: 'いいえ',
+                            cancelButtonAriaLabel: 'いいえ',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                props.setIsSelectingDoubleCard(true)
+                                MySwal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: `${
+                                        CARD[props.cardKey]
+                                    }を使用しました`,
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                })
+                            }
                         })
                     }
                     disabled={props.isSelectingDoubleCard}
