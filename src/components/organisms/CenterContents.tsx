@@ -1,25 +1,26 @@
-import SelectBox from 'components/atoms/SelectBox'
-import { CARD } from 'lib/const'
 import { coordinate } from 'lib/coordinate'
+import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Role } from 'types'
-import { ICard, ICards, IPosition } from 'types/database'
+import { ICards, IPosition, ITern } from 'types/database'
+import TransitionContainers from './TransitionContainers'
 
 interface CenterContentsProps {
     cards: ICards
     isMyTern: boolean
+    isThief: boolean
     myPosition: number
     myRole: Role
-    isThief: boolean
     positions: IPosition
-    submitNextPosition: Function
-    isSelectingDoubleCard: boolean
-    setIsSelectingDoubleCard: Function
+    roomId: number
+    tern: ITern
 }
 
-const CenterContents = (props: CenterContentsProps) => {
+const CenterContents = React.memo((props: CenterContentsProps) => {
     const mapImageRef = useRef<HTMLImageElement>(null)
     const [mapImageWidth, setMapImageWidth] = useState(0)
+
+    const [isSelectingDoubleCard, setIsSelectingDoubleCard] = useState(false)
 
     useEffect(() => {
         if (mapImageRef?.current)
@@ -64,31 +65,20 @@ const CenterContents = (props: CenterContentsProps) => {
                     className="mt-6 grid grid-cols-2 gap-x-20 gap-y-2"
                     style={{ width: `${mapImageWidth}px` }}
                 >
-                    {props.myRole in props.cards &&
-                        (Object.entries(CARD) as [keyof ICard, string][]).map(
-                            ([cardKey, cardValue]) => (
-                                <SelectBox
-                                    cardKey={cardKey}
-                                    cardValue={cardValue}
-                                    cards={props.cards}
-                                    myPosition={props.myPosition}
-                                    myRole={props.myRole}
-                                    submitNextPosition={
-                                        props.submitNextPosition
-                                    }
-                                    isSelectingDoubleCard={
-                                        props.isSelectingDoubleCard
-                                    }
-                                    setIsSelectingDoubleCard={
-                                        props.setIsSelectingDoubleCard
-                                    }
-                                />
-                            ),
-                        )}
+                    <TransitionContainers
+                        cards={props.cards}
+                        isThief={props.isThief}
+                        isSelectingDoubleCard={isSelectingDoubleCard}
+                        myPosition={props.myPosition}
+                        myRole={props.myRole}
+                        roomId={props.roomId}
+                        setIsSelectingDoubleCard={setIsSelectingDoubleCard}
+                        tern={props.tern}
+                    />
                 </div>
             )}
         </>
     )
-}
+})
 
 export default CenterContents
