@@ -94,6 +94,7 @@ const PlayRoom = () => {
                     </div>
                     <RightSidebar
                         action={tern.action}
+                        cards={cards}
                         sortedPlayerStatuses={sortedPlayerStatuses}
                         tern={tern}
                     />

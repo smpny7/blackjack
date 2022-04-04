@@ -18,6 +18,26 @@ export const isTern = (role: Role, tern: ITern): boolean => {
     }
 }
 
+export const isPlayerCard = (cardKey: keyof ICard) => {
+    switch (cardKey) {
+        case 'underGround': {
+            return true
+        }
+        case 'bus': {
+            return true
+        }
+        case 'taxi': {
+            return true
+        }
+        case 'black': {
+            return false
+        }
+        case 'double': {
+            return false
+        }
+    }
+}
+
 export const getCardKeyFromTransportation = (
     transportationKey: Transportation,
 ): keyof ICard => {

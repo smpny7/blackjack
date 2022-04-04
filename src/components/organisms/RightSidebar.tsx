@@ -1,9 +1,10 @@
 import AvatarContainer from 'components/molecules/AvatarContainer'
 import { Position } from 'types'
-import { IPlayerStatus, ITern } from 'types/database'
+import { ICards, IPlayerStatus, ITern } from 'types/database'
 
 interface RightSidebarProps {
     action: Position
+    cards: ICards
     sortedPlayerStatuses: [string, IPlayerStatus][]
     tern: ITern
 }
@@ -19,6 +20,7 @@ const RightSidebar = (props: RightSidebarProps) => {
         <div className="h-screen w-64 flex-none px-4">
             <div className="mt-10">
                 <AvatarContainer
+                    cards={props.cards}
                     tern={props.tern}
                     titleSrc={`${process.env.PUBLIC_URL}/img/label_thief.png`}
                     titleAlt="怪盗X"
@@ -27,6 +29,7 @@ const RightSidebar = (props: RightSidebarProps) => {
             </div>
             <div className="mt-4">
                 <AvatarContainer
+                    cards={props.cards}
                     tern={props.tern}
                     titleSrc={`${process.env.PUBLIC_URL}/img/label_player.png`}
                     titleAlt="刑事"

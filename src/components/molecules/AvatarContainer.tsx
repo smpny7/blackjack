@@ -1,9 +1,10 @@
 import Avatar from 'components/atoms/Avatar'
 import { isTern } from 'lib/util'
 import React from 'react'
-import { IPlayerStatus, ITern } from 'types/database'
+import { ICards, IPlayerStatus, ITern } from 'types/database'
 
 interface AvatarContainerProps {
+    cards: ICards
     playerStatuses: [string, IPlayerStatus][]
     tern: ITern
     titleSrc: string
@@ -20,9 +21,10 @@ const AvatarContainer = React.memo((props: AvatarContainerProps) => (
         <div className="relative -top-4 z-0 grid grid-cols-2 rounded-2xl bg-white/80 px-3 py-8 drop-shadow-xl">
             {props.playerStatuses.map(([index, playerStatus]) => (
                 <Avatar
-                    key={index}
+                    cards={props.cards}
                     isTern={isTern(playerStatus.role, props.tern)}
                     playerStatus={playerStatus}
+                    key={index}
                 />
             ))}
         </div>
