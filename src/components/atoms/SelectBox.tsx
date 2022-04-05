@@ -1,7 +1,7 @@
 import { update } from 'firebase/database'
-import { CARD } from 'lib/const'
-import { useDatabase } from 'lib/database'
-import { route } from 'lib/route'
+import { CARD } from 'lib/data/const'
+import { useReference } from 'lib/database'
+import { route } from 'lib/data/route'
 import React, { useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -27,11 +27,11 @@ const SelectBox = React.memo((props: SelectBoxProps) => {
     const [isSelectingBlackCard, setIsSelectingBlackCard] = useState(false)
 
     // Realtime Database Ref
-    const hasMovedRef = useDatabase(`terns/${props.roomId}/hasMoved`)
-    const historyRef = useDatabase(`history/${props.roomId}`)
-    const positionRef = useDatabase(`positions/${props.roomId}`)
-    const ternRef = useDatabase(`terns/${props.roomId}`)
-    const transportationRef = useDatabase(
+    const hasMovedRef = useReference(`terns/${props.roomId}/hasMoved`)
+    const historyRef = useReference(`history/${props.roomId}`)
+    const positionRef = useReference(`positions/${props.roomId}`)
+    const ternRef = useReference(`terns/${props.roomId}`)
+    const transportationRef = useReference(
         `cards/${props.roomId}/${props.myRole}`,
     )
 

@@ -1,12 +1,12 @@
 import CenterContents from 'components/organisms/CenterContents'
 import LeftSidebar from 'components/organisms/LeftSidebar'
 import RightSidebar from 'components/organisms/RightSidebar'
-import { ROLES } from 'lib/const'
-import { useDatabase, useFetchData } from 'lib/database'
+import { ROLES } from 'lib/data/const'
+import { useReference, useListenData } from 'lib/database'
 import { isTern, judgeIsGameOver } from 'lib/util'
 import { useSelector } from 'react-redux'
 import { Navigate, useLocation } from 'react-router-dom'
-import { Store } from 'stores'
+import { UserStore } from 'types/store'
 import { Role } from 'types'
 import {
     ICards,
@@ -21,21 +21,21 @@ const PlayRoom = () => {
 
     const location = useLocation()
 
-    const user = useSelector((state: Store) => state.user)
+    const user = useSelector((state: UserStore) => state.user)
 
     // ▼ Realtime Database Ref ▼
-    const cardsRef = useDatabase(`cards/${roomId}`)
-    const myStatusRef = useDatabase(`playerStatus/${roomId}/${user.uid}`)
-    const playerStatusRef = useDatabase(`playerStatus/${roomId}`)
-    const positionRef = useDatabase(`positions/${roomId}`)
-    const ternRef = useDatabase(`terns/${roomId}`)
+    const cardsRef = useReference(`cards/${roomId}`)
+    const myStatusRef = useReference(`playerStatus/${roomId}/${user.uid}`)
+    const playerStatusRef = useReference(`playerStatus/${roomId}`)
+    const positionRef = useReference(`positions/${roomId}`)
+    const ternRef = useReference(`terns/${roomId}`)
 
     // ▼ Realtime Database Data ▼
-    const cards = useFetchData<ICards>(cardsRef)
-    const myStatus = useFetchData<IPlayerStatus>(myStatusRef)
-    const playerStatuses = useFetchData<IPlayerStatuses>(playerStatusRef)
-    const positions = useFetchData<IPosition>(positionRef)
-    const tern = useFetchData<ITern>(ternRef)
+    const cards = useListenData<ICards>(cardsRef)
+    const myStatus = useListenData<IPlayerStatus>(myStatusRef)
+    const playerStatuses = useListenData<IPlayerStatuses>(playerStatusRef)
+    const positions = useListenData<IPosition>(positionRef)
+    const tern = useListenData<ITern>(ternRef)
 
     // ▼ Data ▼
     const myRole = myStatus.role // 自分の役職

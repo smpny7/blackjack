@@ -121,7 +121,23 @@
             }
         }
     },
-    "rooms": { "12345678": "Aルーム", "23456789": "Bルーム" },
+    "rooms": {
+        "12345678": {
+            "name": "Aルーム",
+            "playerCount": 0,
+            "isFinished": false
+        },
+        "23456789": {
+            "name": "Bルーム",
+            "playerCount": 4,
+            "isFinished": false
+        },
+        "98361432": {
+            "name": "Cルーム",
+            "playerCount": 6,
+            "isFinished": true
+        }
+    },
     "terns": {
         "23456789": {
             "action": "thief",

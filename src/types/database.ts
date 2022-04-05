@@ -23,6 +23,18 @@ export interface IHistories {
 
 // ======================================================
 
+export interface IRoom {
+    name: string
+    playerCount: number
+    isFinished: boolean
+}
+
+export interface IRooms {
+    [key: string]: IRoom
+}
+
+// ======================================================
+
 export interface IPlayerStatus {
     isReady: boolean
     avatar: string

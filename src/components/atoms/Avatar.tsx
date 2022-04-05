@@ -1,4 +1,4 @@
-import { CARD } from 'lib/const'
+import { CARD } from 'lib/data/const'
 import { isPlayerCard } from 'lib/util'
 import React from 'react'
 import Swal from 'sweetalert2'

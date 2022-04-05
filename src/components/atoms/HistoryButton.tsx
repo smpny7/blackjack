@@ -1,5 +1,5 @@
-import { OPEN_TERN } from 'lib/const'
-import { useDatabase, useFetchData } from 'lib/database'
+import { OPEN_TERN } from 'lib/data/const'
+import { useReference, useListenData } from 'lib/database'
 import React from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -13,10 +13,10 @@ const HistoryButton = React.memo((props: HistoryButtonProps) => {
     const reactSwal = withReactContent(Swal)
 
     // ▼ Realtime Database Ref ▼
-    const historyRef = useDatabase(`history/${props.roomId}`)
+    const historyRef = useReference(`history/${props.roomId}`)
 
     // ▼ Realtime Database Data ▼
-    const histories = useFetchData<IHistories>(historyRef)
+    const histories = useListenData<IHistories>(historyRef)
 
     const showModal = () => {
         reactSwal.fire({

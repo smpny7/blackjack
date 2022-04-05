@@ -1,4 +1,4 @@
-import { CARD } from 'lib/const'
+import { CARD } from 'lib/data/const'
 import React from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'

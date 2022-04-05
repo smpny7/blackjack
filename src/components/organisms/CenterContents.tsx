@@ -1,4 +1,4 @@
-import { coordinate } from 'lib/coordinate'
+import { coordinate } from 'lib/data/coordinate'
 import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Role } from 'types'

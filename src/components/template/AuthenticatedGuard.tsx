@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { Store } from 'stores'
+import { UserStore } from 'types/store'
 
 const AuthenticatedGuard: FC = ({ children }) => {
-    const user = useSelector((state: Store) => state.user)
+    const user = useSelector((state: UserStore) => state.user)
     const isAuthenticated = user && user.uid !== undefined
 
     const location = useLocation()

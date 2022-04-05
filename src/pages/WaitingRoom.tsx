@@ -1,11 +1,11 @@
 import { ref, update } from 'firebase/database'
-import { useDatabase, useFetchData } from 'lib/database'
+import { useReference, useListenData } from 'lib/database'
 import { db } from 'lib/firebase'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, Navigate, useLocation } from 'react-router-dom'
-import { Store } from 'stores'
+import { UserStore } from 'types/store'
 
 export interface PlayerStatus {
     isReady: boolean
@@ -16,11 +16,11 @@ export interface PlayerStatus {
 
 const WaitingRoom = () => {
     const location = useLocation()
-    const user = useSelector((state: Store) => state.user)
+    const user = useSelector((state: UserStore) => state.user)
 
     // ref渡してデータを取得する
-    const memberRef = useDatabase('playerStatus' + '/' + '12345678')
-    const members = useFetchData<Record<string, PlayerStatus>>(memberRef)
+    const memberRef = useReference('playerStatus' + '/' + '12345678')
+    const members = useListenData<Record<string, PlayerStatus>>(memberRef)
 
     const initialStatus = {
         isReady: false,
@@ -60,10 +60,10 @@ const WaitingRoom = () => {
         })
     }
 
-    const positionRef = useDatabase('positions' + '/' + '12345678')
-    const ternRef = useDatabase('terns' + '/' + '12345678')
-    const cardsRef = useDatabase('cards' + '/' + '12345678')
-    const historyRef = useDatabase('history' + '/' + '12345678')
+    const positionRef = useReference('positions' + '/' + '12345678')
+    const ternRef = useReference('terns' + '/' + '12345678')
+    const cardsRef = useReference('cards' + '/' + '12345678')
+    const historyRef = useReference('history' + '/' + '12345678')
 
     // const initialPositions = [
     //     13, 16, 26, 29, 34, 50, 53, 94, 103, 112, 117, 132, 138, 141, 155, 174,

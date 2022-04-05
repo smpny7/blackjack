@@ -1,4 +1,4 @@
-import AuthenticatedGuard from 'AuthenticatedGuard'
+import AuthenticatedGuard from 'components/template/AuthenticatedGuard'
 import PlayRoom from 'pages/PlayRoom'
 import WaitingRoom from 'pages/WaitingRoom'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
@@ -10,7 +10,7 @@ const App = () => {
         <Router>
             <Routes>
                 <Route
-                    path="/waiting-room"
+                    path="/waiting-room/:roomId"
                     element={
                         <AuthenticatedGuard>
                             <WaitingRoom />
@@ -26,6 +26,14 @@ const App = () => {
                     }
                 />
                 <Route path="/" element={<Home />} />
+                <Route
+                    path="*"
+                    element={
+                        <main style={{ padding: '1rem' }}>
+                            <p>There's nothing here!</p>
+                        </main>
+                    }
+                />
             </Routes>
         </Router>
     )
